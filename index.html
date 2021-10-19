@@ -6,8 +6,24 @@
 		<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Material+Icons&display=block" rel="stylesheet">
 
+		<style>
+			:root{
+				--mdc-theme-primary: green;
+				--mdc-drawer-width: 360px;
+				--mdc-theme-surface:  #fff;
+			}
+			mwc-textfield {
+				--mdc-text-field-fill-color: rgb(245, 245, 245);
+				--mdc-shape-small: 0px;
+			}
+			body{
+				margin: 0px;
+				padding: 0px;
+			}
+		</style>
+
 		<script type="module">
-			import init from './pkg/immunity_client.js';
+			import init from './pkg/pine_client.js';
 			async function run() {
 				await init();
 			}
@@ -17,3 +33,4 @@
 	<body></body>
 </html>
 
+<!--mdc-theme-primary: #6200ee;-->

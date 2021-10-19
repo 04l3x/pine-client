@@ -1,5 +1,5 @@
-pub mod dashboard;
-pub mod git;
+pub mod create_repo;
+pub mod home;
 pub mod login;
 pub mod register;
-pub mod settings;
+pub mod tree;

@@ -1,8 +1,6 @@
 use yew::prelude::*;
 
-use crate::components::dashboard::Dashboard;
-//use crate::components::login::Login;
-//use crate::components::register::Register;
+use crate::components;
 
 pub struct App {}
 
@@ -26,9 +24,7 @@ impl Component for App {
 
 	fn view(&self) -> Html {
 		html! { <>
-			//<Login />
-			//<Register />
-			<Dashboard />
+			<components::home::Home />
 		</> }
 	}
 }

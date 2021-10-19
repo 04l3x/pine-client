@@ -1,5 +1,5 @@
 [package]
-name = "immunity-client"
+name = "pine-client"
 version = "0.1.0"
 authors = ["al3x al3x@al3x.io"]
 edition = "2018"
@@ -9,15 +9,15 @@ crate-type = ["rlib", "cdylib"]
 
 [dependencies]
 yew = "0.18"
-#yew-router = "0.15"
-material-yew = { version = "0.1.0", features = ["full"] }
 css-in-rust = "0.5.0"
-
 wasm-bindgen = "0.2"
-
 serde = "1"
 graphql_client = "0.10.0"
 
+
+[dependencies.material-yew] 
+version = "0.1.0" 
+features = ["full"]
 
 [dependencies.web-sys]
 version = "0.3"
@@ -32,3 +32,7 @@ features = [
 [dev-dependencies]
 wasm-bindgen-test = "0.3.0"
 
+
+
+
+#yew-router = "0.15"
