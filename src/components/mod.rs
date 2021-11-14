@@ -1,5 +1,10 @@
 pub mod create_repo;
 pub mod home;
 pub mod login;
+pub mod login_button;
 pub mod register;
+pub mod register_button;
+pub mod repository_viewer;
+pub mod search_tool;
+pub mod topbar;
 pub mod tree;

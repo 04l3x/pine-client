@@ -8,16 +8,36 @@ edition = "2018"
 crate-type = ["rlib", "cdylib"]
 
 [dependencies]
-yew = "0.18"
-css-in-rust = "0.5.0"
 wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+
+yew = "0.18"
+yew-router = "0.15"
+yewtil = "0.4"
+css-in-rust = "0.5.0"
 serde = "1"
-graphql_client = "0.10.0"
 
+[dependencies.lightql]
+git = "https://github.com/0al3x/lightql-rs.git"
 
-[dependencies.material-yew] 
-version = "0.1.0" 
-features = ["full"]
+[dependencies.material-yew]
+version = "0.1.0"
+features = [
+	"full"
+]
+
+[dependencies.getrandom] 
+version = "0.2"
+features = [
+	"js"
+]
+
+[dependencies.uuid]
+version = "0.8"
+features = [
+	"serde",
+	"v4"
+]
 
 [dependencies.web-sys]
 version = "0.3"
@@ -28,11 +48,6 @@ features = [
 	'HtmlElement',
 ]
 
-
 [dev-dependencies]
 wasm-bindgen-test = "0.3.0"
 
-
-
-
-#yew-router = "0.15"
