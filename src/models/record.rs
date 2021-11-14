@@ -2,14 +2,14 @@ use lightql::{Client, GraphQLError};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum Visibility {
 	Public,
 	Private,
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Record {
 	pub id: Uuid,
@@ -17,15 +17,18 @@ pub struct Record {
 	pub name: String,
 	pub description: String,
 	pub visibility: Visibility,
+	pub owner_name: String,
+	pub owner_avatar: String,
 }
 
 impl Record {
-	pub async fn get_public_record() -> Result<Data, GraphQLError> {
+	pub async fn get_public_record(page: i32) -> Result<Data, GraphQLError> {
+		let vars = Vars { page, filter: None, query: None };
 		Client::new(crate::ENDPOINT)
-			.query::<Data>(
+			.query_with_vars::<Data, Vars>(
 				r#"
-				query all_public_repositories {
-					publicRecord(page: 1) {
+				query public_record_paginated($page: Int) {
+					publicRecord(page: $page) {
 						info {
 							count
 							pages
@@ -37,11 +40,14 @@ impl Record {
 							name
 							ownerId
 							description
-							visibility
+							visibility,
+							ownerName,
+							ownerAvatar
 						}
 					}
 				}
 			"#,
+				vars,
 			)
 			.await
 	}
@@ -49,19 +55,15 @@ impl Record {
 	pub async fn search(query: String, page: i32) -> Result<Data, GraphQLError> {
 		let vars = Vars {
 			page,
-			filter: Filter {
-				id: None,
-				name: Some(query),
-				description: None,
-				visibility: None,
-			},
+			filter: None,
+			query: Some(query),
 		};
 
 		Client::new(crate::ENDPOINT)
 			.query_with_vars::<Data, Vars>(
 				r#"
-				query all_public_repositories {
-					publicRecord(page: 1) {
+				query public_record_paginated_with_filter($page: Int, $query: String) {
+					publicRecord(page: $page, query: $query) {
 						info {
 							count
 							pages
@@ -74,11 +76,15 @@ impl Record {
 							ownerId
 							description
 							visibility
+							ownerName
+							ownerAvatar
 						}
 					}
 				}
 			"#,
-			vars).await
+				vars,
+			)
+			.await
 	}
 }
 
@@ -106,24 +112,20 @@ pub struct Info {
 #[serde(rename_all = "camelCase")]
 pub struct Records {
 	info: Info,
-	results: Option<Vec<Record>>
+	results: Option<Vec<Record>>,
 }
 
-#[allow(dead_code)]
 #[derive(Serialize)]
 struct Vars {
 	page: i32,
-	filter: Filter,
+	filter: Option<Filter>,
+	query: Option<String>,
 }
 
-#[allow(dead_code)]
 #[derive(Serialize)]
 struct Filter {
-  id: Option<Uuid>,
-  name: Option<String>,
-  description: Option<String>,
-  visibility: Option<Visibility>,
+	id: Option<Uuid>,
+	name: Option<String>,
+	description: Option<String>,
+	visibility: Option<Visibility>,
 }
-
-
-

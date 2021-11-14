@@ -3,8 +3,9 @@ use crate::utils::{new_style, parser};
 use material_yew::text_inputs::MatTextField;
 use yew::prelude::*;
 use yew::services::console::ConsoleService;
-use yew::virtual_dom::VNode;
 use yewtil::future::LinkFuture;
+
+use super::record_view::RecordView;
 
 pub struct SearchTool {
 	link: ComponentLink<Self>,
@@ -35,7 +36,7 @@ impl Component for SearchTool {
 		match msg {
 			Msg::Init => {
 				self.link.send_future(async {
-					match Record::get_public_record().await {
+					match Record::get_public_record(1).await {
 						Ok(res) => {
 							ConsoleService::log(&format!("Ok: {:?}", res));
 							Msg::UpdateResults(res.content())
@@ -104,17 +105,19 @@ impl Component for SearchTool {
 			</div>
 
 			{match &self.results {
-				Some(results) => html! { 
+				Some(results) => html! {
 					<div>
 						{
 							for results.iter().map( |rec| {
-								html!{ <div>{"record"}<p>{rec.name.clone()}</p></div> }
+								html!{ <div>
+									<RecordView record={rec.clone()} />
+								</div> }
 							})
 						}
-					</div> 
+					</div>
 				},
-				None => html! { 
-					<div>{"none results to view"}</div> 
+				None => html! {
+					<div>{"none results to view"}</div>
 				}
 			}}
 		</> }
