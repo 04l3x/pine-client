@@ -1,6 +1,9 @@
 use crate::models::record::Record;
 use crate::utils::{log, new_style, parser};
-use material_yew::text_inputs::{MatTextField, TextFieldType};
+use material_yew::{
+	icon_button::MatIconButton,
+	text_inputs::{MatTextField, TextFieldType},
+};
 use yew::prelude::*;
 use yewtil::future::LinkFuture;
 
@@ -8,6 +11,7 @@ use super::record_view::RecordView;
 
 pub struct SearchTool {
 	link: ComponentLink<Self>,
+	props: Props,
 	query: String,
 	results: Vec<Record>,
 }
@@ -15,17 +19,24 @@ pub struct SearchTool {
 pub enum Msg {
 	Init,
 	Search(String),
+	Toggle(MouseEvent),
 	UpdateResults(Vec<Record>),
+}
+
+#[derive(Properties, Clone, PartialEq)]
+pub struct Props {
+	pub toggle: Callback<MouseEvent>,
 }
 
 impl Component for SearchTool {
 	type Message = Msg;
-	type Properties = ();
+	type Properties = Props;
 
-	fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+	fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
 		link.send_message(Msg::Init);
 		Self {
 			link,
+			props,
 			query: String::from(""),
 			results: vec![],
 		}
@@ -65,6 +76,10 @@ impl Component for SearchTool {
 				});
 			}
 
+			Msg::Toggle(e) => {
+				self.props.toggle.emit(e);
+			}
+
 			Msg::UpdateResults(results) => {
 				self.results = results;
 			}
@@ -80,21 +95,31 @@ impl Component for SearchTool {
 		let container = parser(new_style(
 			"img",
 			r#"
-					height: 64px;
-					background: var(--mdc-theme-primary);
-					display: flex;
-					align-items: center;
-				"#,
+				height: 64px;
+				background: var(--mdc-theme-primary);
+				display: flex;
+				align-items: center;
+				justify-content: space-evenly;
+			"#,
 		));
 
 		let text_field = parser(new_style(
 			"mwc-textfield",
 			r#"
-					margin-left: 32px;
-				"#,
+				margin-left: 32px;
+			"#,
+		));
+
+		let toggle_style = parser(new_style(
+			"mwc-textfield",
+			r#"
+				color: var(--colors-white);
+			"#,
 		));
 
 		let on_input = self.link.callback(|e: InputData| Msg::Search(e.value));
+
+		let toggle = self.link.callback(|e| Msg::Toggle(e));
 
 		html! { <>
 			<div class={container}>
@@ -107,6 +132,8 @@ impl Component for SearchTool {
 						value={self.query.clone()}
 					/>
 				</div>
+
+				<span class={toggle_style} onclick={toggle}> <MatIconButton icon={"close"} > </MatIconButton> </span>
 			</div>
 
 			{	if !self.results.len() > 0  {

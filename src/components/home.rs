@@ -52,7 +52,7 @@ impl Component for Home {
 		html! { <>
 			<MatDrawer open={opened} drawer_type={"dismissible"}>
 
-				<SearchTool />
+				<SearchTool toggle={toggle.clone()} />
 
 				<MatDrawerAppContent>
 					<TopBar toggle={toggle} drawer_opened={opened} />
