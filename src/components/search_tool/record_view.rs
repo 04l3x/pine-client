@@ -1,7 +1,7 @@
-use yew::prelude::*;
 use crate::models::record::Record;
+use yew::prelude::*;
 
-pub struct RecordView{
+pub struct RecordView {
 	props: Props,
 }
 
@@ -26,8 +26,7 @@ impl Component for RecordView {
 		if self.props != props {
 			self.props = props;
 			true
-		}
-		else {
+		} else {
 			false
 		}
 	}
@@ -40,5 +39,3 @@ impl Component for RecordView {
 		</> }
 	}
 }
-
-

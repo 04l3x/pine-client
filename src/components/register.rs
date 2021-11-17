@@ -1,3 +1,8 @@
+use crate::utils::{new_style, parser};
+use material_yew::{
+	button::MatButton,
+	text_inputs::{MatTextField, TextFieldType},
+};
 use yew::prelude::*;
 
 pub struct Register {}
@@ -21,30 +26,48 @@ impl Component for Register {
 	}
 
 	fn view(&self) -> Html {
+		let ctn_style = parser(new_style(
+			"div",
+			r#"
+					display: flex;
+					width: 100%;
+					height: 100vh;
+					justify-content: center;
+					align-items: center;
+				"#,
+		));
 		html! { <>
-			<form>
-				<div>
-					<label for={"email"} >{"email"}</label>
-					<input id={"email"} name={"email"} type={"text"} />
-				</div>
+			<div class={ctn_style} >
+				<form>
+					<div>
+						<MatTextField
+							label = {"email"}
+							field_type = {TextFieldType::Email}
+						/>
+					</div>
+					<div>
+						<MatTextField
+							label = {"username"}
+							field_type = {TextFieldType::Text}
+						/>
+					</div>
 
-				<div>
-					<label for={"username"} >{"username"}</label>
-					<input id={"username"} name={"username"} type={"text"} />
-				</div>
+					<div>
+						<MatTextField
+							label = {"password"}
+							field_type = {TextFieldType::Password}
+						/>
+					</div>
 
-				<div>
-					<label for={"pwd"}>{"password"}</label>
-					<input id={"pwd"} name={"pwd"} type={"password"}/>
-				</div>
-
-				<div>
-					<label for={"pwd2"}>{"confirm password"}</label>
-					<input id={"pwd2"} name={"pwd2"} type={"password"}/>
-				</div>
-
-				<button type={"submit"}>{"register"}</button>
-			</form>
+					<div>
+						<MatTextField
+							label = {"confirm password"}
+							field_type = {TextFieldType::Password}
+						/>
+					</div>
+					<MatButton label = {"login"} />
+				</form>
+			</div>
 		</> }
 	}
 }

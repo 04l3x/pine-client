@@ -1,8 +1,7 @@
 use crate::models::record::Record;
-use crate::utils::{new_style, parser};
-use material_yew::text_inputs::MatTextField;
+use crate::utils::{log, new_style, parser};
+use material_yew::text_inputs::{MatTextField, TextFieldType};
 use yew::prelude::*;
-use yew::services::console::ConsoleService;
 use yewtil::future::LinkFuture;
 
 use super::record_view::RecordView;
@@ -10,13 +9,13 @@ use super::record_view::RecordView;
 pub struct SearchTool {
 	link: ComponentLink<Self>,
 	query: String,
-	results: Option<Vec<Record>>,
+	results: Vec<Record>,
 }
 
 pub enum Msg {
 	Init,
 	Search(String),
-	UpdateResults(Option<Vec<Record>>),
+	UpdateResults(Vec<Record>),
 }
 
 impl Component for SearchTool {
@@ -28,7 +27,7 @@ impl Component for SearchTool {
 		Self {
 			link,
 			query: String::from(""),
-			results: None,
+			results: vec![],
 		}
 	}
 
@@ -38,12 +37,12 @@ impl Component for SearchTool {
 				self.link.send_future(async {
 					match Record::get_public_record(1).await {
 						Ok(res) => {
-							ConsoleService::log(&format!("Ok: {:?}", res));
+							log(&format!("Ok: {:?}", res));
 							Msg::UpdateResults(res.content())
 						}
 						Err(err) => {
-							ConsoleService::log(&format!("Err: {:?}", err));
-							Msg::UpdateResults(None)
+							log(&format!("Err: {:?}", err));
+							Msg::UpdateResults(vec![])
 						}
 					}
 				});
@@ -55,12 +54,12 @@ impl Component for SearchTool {
 				self.link.send_future(async {
 					match Record::search(query, 1).await {
 						Ok(res) => {
-							ConsoleService::log(&format!("Ok: {:?}", res));
+							log(&format!("Ok: {:?}", res));
 							Msg::UpdateResults(res.content())
 						}
 						Err(err) => {
-							ConsoleService::log(&format!("Err: {:?}", err));
-							Msg::UpdateResults(None)
+							log(&format!("Err: {:?}", err));
+							Msg::UpdateResults(vec![])
 						}
 					}
 				});
@@ -100,26 +99,38 @@ impl Component for SearchTool {
 		html! { <>
 			<div class={container}>
 				<div class={text_field}>
-					<MatTextField  label="search" icon_trailing="search" oninput={on_input} value={self.query.clone()}/>
+					<MatTextField
+						label="search"
+						field_type={TextFieldType::Search}
+						icon_trailing="search"
+						oninput={on_input}
+						value={self.query.clone()}
+					/>
 				</div>
 			</div>
 
-			{match &self.results {
-				Some(results) => html! {
-					<div>
-						{
-							for results.iter().map( |rec| {
-								html!{ <div>
-									<RecordView record={rec.clone()} />
-								</div> }
-							})
-						}
-					</div>
-				},
-				None => html! {
-					<div>{"none results to view"}</div>
+			{	if !self.results.len() > 0  {
+					html! {
+						<div>{"none results to view"}</div>
+					}
 				}
-			}}
+				else {
+					html! {
+						<div>
+							{
+								for self.results.iter().map( |rec| {
+									html!{ <div>
+										<RecordView record={rec.clone()} />
+									</div> }
+								})
+							}
+						</div>
+					}
+				}
+			}
+
+
+
 		</> }
 	}
 }

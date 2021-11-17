@@ -1,6 +1,7 @@
-//use crate::utils::{new_style, parser};
+use crate::app::AppRoute;
 use material_yew::button::MatButton;
 use yew::prelude::*;
+use yew_router::components::RouterAnchor;
 
 pub struct RegisterButton;
 impl Component for RegisterButton {
@@ -21,7 +22,9 @@ impl Component for RegisterButton {
 
 	fn view(&self) -> Html {
 		html! { <>
-			<MatButton label="register" raised=true/>
+			<RouterAnchor<AppRoute> route=AppRoute::Register>
+				<MatButton label="register" raised=true/>
+			</RouterAnchor<AppRoute>>
 		</> }
 	}
 }

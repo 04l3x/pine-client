@@ -1,4 +1,5 @@
-use lightql::{Client, GraphQLError};
+use crate::graphql::{Executor, GqlError};
+use error::Result;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -22,68 +23,27 @@ pub struct Record {
 }
 
 impl Record {
-	pub async fn get_public_record(page: i32) -> Result<Data, GraphQLError> {
-		let vars = Vars { page, filter: None, query: None };
-		Client::new(crate::ENDPOINT)
-			.query_with_vars::<Data, Vars>(
-				r#"
-				query public_record_paginated($page: Int) {
-					publicRecord(page: $page) {
-						info {
-							count
-							pages
-							prev
-							next
-						}
-						results {
-							id
-							name
-							ownerId
-							description
-							visibility,
-							ownerName,
-							ownerAvatar
-						}
-					}
-				}
-			"#,
-				vars,
-			)
+	pub async fn get_public_record(page: i32) -> Result<Data> {
+		let vars = Vars {
+			page,
+			filter: None,
+			query: None,
+		};
+
+		Executor::default()
+			.execute_with_vars::<Data, Vars>("public_record_paginated", vars)
 			.await
 	}
 
-	pub async fn search(query: String, page: i32) -> Result<Data, GraphQLError> {
+	pub async fn search(query: String, page: i32) -> Result<Data> {
 		let vars = Vars {
 			page,
 			filter: None,
 			query: Some(query),
 		};
 
-		Client::new(crate::ENDPOINT)
-			.query_with_vars::<Data, Vars>(
-				r#"
-				query public_record_paginated_with_filter($page: Int, $query: String) {
-					publicRecord(page: $page, query: $query) {
-						info {
-							count
-							pages
-							prev
-							next
-						}
-						results {
-							id
-							name
-							ownerId
-							description
-							visibility
-							ownerName
-							ownerAvatar
-						}
-					}
-				}
-			"#,
-				vars,
-			)
+		Executor::default()
+			.execute_with_vars::<Data, Vars>("public_record_with_vars", vars)
 			.await
 	}
 }
@@ -95,7 +55,7 @@ pub struct Data {
 }
 
 impl Data {
-	pub fn content(self) -> Option<Vec<Record>> {
+	pub fn content(self) -> Vec<Record> {
 		self.public_record.results
 	}
 }
@@ -112,7 +72,7 @@ pub struct Info {
 #[serde(rename_all = "camelCase")]
 pub struct Records {
 	info: Info,
-	results: Option<Vec<Record>>,
+	results: Vec<Record>,
 }
 
 #[derive(Serialize)]

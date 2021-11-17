@@ -1,9 +1,0 @@
-query all_public_repositories {
-	allPublicRecord {
-		id,
-		ownerId,
-		name,
-		description,
-		visibility
-	}
-}

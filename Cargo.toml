@@ -19,6 +19,7 @@ serde = "1"
 
 [dependencies.lightql]
 git = "https://github.com/0al3x/lightql-rs.git"
+branch = "dev"
 
 [dependencies.material-yew]
 version = "0.1.0"
@@ -47,6 +48,10 @@ features = [
 	'Element',
 	'HtmlElement',
 ]
+
+[dependencies.error]
+path = "../pine-error"
+package = "pine-error"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.0"

@@ -2,6 +2,18 @@ use yew::prelude::*;
 
 use crate::components;
 
+use yew_router::prelude::*;
+
+#[derive(Switch, Debug, Clone)]
+pub enum AppRoute {
+	#[to = "/login"]
+	Login,
+	#[to = "/register"]
+	Register,
+	#[to = "/"]
+	Home,
+}
+
 pub struct App {}
 
 pub enum Msg {}

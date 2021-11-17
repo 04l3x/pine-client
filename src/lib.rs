@@ -1,11 +1,15 @@
 mod app;
+mod auth;
 mod components;
+mod graphql;
 mod models;
 mod utils;
 
 use wasm_bindgen::prelude::*;
 
-pub(crate) const ENDPOINT: &str = "http://localhost:9000/api";
+pub(crate) fn endpoint() -> &'static str {
+	"http://localhost:9000/api"
+}
 
 #[wasm_bindgen(start)]
 pub fn run_app() -> Result<(), JsValue> {
