@@ -3,10 +3,10 @@ use crate::components::{
 	dashboard::Dashboard, login::Login, register::Register, search_tool::search_tool::SearchTool,
 	topbar::TopBar,
 };
+use crate::utils::log;
 use material_yew::drawer::*;
 use yew::prelude::*;
 use yew_router::prelude::*;
-//use crate::utils::{new_style, parser};
 
 use yew_router::service::RouteService;
 
@@ -56,16 +56,14 @@ impl Component for Home {
 
 				<MatDrawerAppContent>
 					<TopBar toggle={toggle} drawer_opened={opened} />
-						<Router<AppRoute, ()>
-							render = Router::render(Self::switch)
-						/>
+					<Router<AppRoute, ()>
+						render = Router::render(Self::switch)
+					/>
 				</MatDrawerAppContent>
 			</MatDrawer>
 		</> }
 	}
 }
-
-use yew::services::ConsoleService;
 
 impl Home {
 	fn switch(switch: AppRoute) -> Html {
@@ -79,7 +77,6 @@ impl Home {
 	fn current_route() {
 		let route_service: RouteService<()> = RouteService::new();
 		let route = route_service.get_route();
-
-		ConsoleService::log(&format!("{:?}", route));
+		log(&format!("{:?}", route));
 	}
 }

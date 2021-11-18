@@ -1,11 +1,9 @@
 mod queries;
 use crate::utils::get_token;
 use error::Result;
-use lightql::{Client, GraphQLError};
+use lightql::Client;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-
-pub type GqlError = GraphQLError;
 
 pub struct Executor<'c> {
 	client: Client<'c>,

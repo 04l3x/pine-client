@@ -1,11 +1,12 @@
-use crate::auth;
-use crate::utils::{new_style, parser};
-use error::Result;
+use crate::app::AppRoute;
+use crate::auth::Credentials;
+use crate::utils::{log, new_style, parser};
 use material_yew::{
 	button::MatButton,
 	text_inputs::{MatTextField, TextFieldType},
 };
 use yew::prelude::*;
+use yewtil::future::LinkFuture;
 
 pub struct Login {
 	link: ComponentLink<Self>,
@@ -14,9 +15,10 @@ pub struct Login {
 }
 
 pub enum Msg {
+	Clean,
+	Login,
 	SetUsername(String),
 	SetPassword(String),
-	Login,
 }
 
 impl Component for Login {
@@ -33,17 +35,38 @@ impl Component for Login {
 
 	fn update(&mut self, msg: Self::Message) -> ShouldRender {
 		match msg {
+			Msg::Clean => {
+				self.username = String::from("");
+				self.password = String::from("");
+				true
+			}
 			Msg::SetUsername(username) => {
 				self.username = username;
+				false
 			}
 			Msg::SetPassword(password) => {
 				self.password = password;
+				false
 			}
-			Msg::Login => match Self::login(self.username.clone(), self.password.clone()) {
-				_ => {}
-			},
+			Msg::Login => {
+				let credentials = Credentials::new(self.username.clone(), self.password.clone());
+
+				self.link.send_future(async {
+					match credentials.login().await {
+						Ok(_) => {
+							log(&format!("ok"));
+							Msg::Clean
+						}
+						Err(e) => {
+							log(&format!("err: {:?}", e));
+							Msg::Clean
+						}
+					}
+				});
+
+				false
+			}
 		}
-		false
 	}
 
 	fn change(&mut self, _: Self::Properties) -> ShouldRender {
@@ -54,12 +77,12 @@ impl Component for Login {
 		let ctn_style = parser(new_style(
 			"div",
 			r#"
-					display: flex;
-					width: 100%;
-					height: 100vh;
-					justify-content: center;
-					align-items: center;
-				"#,
+				display: flex;
+				width: 100%;
+				height: 100vh;
+				justify-content: center;
+				align-items: center;
+			"#,
 		));
 
 		let input_usrn = self.link.callback(|e: InputData| Msg::SetUsername(e.value));
@@ -92,11 +115,5 @@ impl Component for Login {
 				</form>
 			</div>
 		</> }
-	}
-}
-
-impl Login {
-	fn login(username: String, password: String) -> Result<()> {
-		Ok(auth::Credentials::new(username, password).login())
 	}
 }

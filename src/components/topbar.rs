@@ -68,11 +68,10 @@ impl Component for TopBar {
 		html! { <>
 			<MatTopAppBar>
 				<MatTopAppBarNavigationIcon>
-					{if self.props.drawer_opened {
-						html! { <span onclick={toggle}> <MatIconButton icon={"menu"} > </MatIconButton> </span> }
-					}
-					else {
+					{if !self.props.drawer_opened {
 						html! { <span onclick={toggle}> <MatIconButton icon={"search"} > </MatIconButton> </span> }
+					} else {
+						html! { }
 					}}
 				</MatTopAppBarNavigationIcon>
 

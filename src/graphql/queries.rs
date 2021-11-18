@@ -4,8 +4,30 @@ pub fn load<'q>(key: &'q str) -> Option<&'q str> {
 	Some(*queries::<'q>().get(key).expect("error loadind query"))
 }
 
+///queries.insert(
+///	"$$query_name$$",
+///	"$$query_raw$$",
+///);
 fn queries<'q>() -> HashMap<&'q str, &'q str> {
 	let mut queries: HashMap<&str, &str> = HashMap::new();
+
+	queries.insert(
+		"login",
+		"mutation login($creds: Credentials) {
+			signIn(credentials: $creds){
+				token
+			}
+		}",
+	);
+
+	queries.insert(
+		"register",
+		"mutation register($form: SignUpForm) {
+			signUp(form: $form){
+				token
+			}
+		}",
+	);
 
 	queries.insert(
 		"public_record_paginated",

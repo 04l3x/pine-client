@@ -1,4 +1,4 @@
-use crate::graphql::{Executor, GqlError};
+use crate::graphql::Executor;
 use error::Result;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
