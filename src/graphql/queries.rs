@@ -30,6 +30,13 @@ fn queries<'q>() -> HashMap<&'q str, &'q str> {
 	);
 
 	queries.insert(
+		"is_logged",
+		"query is_logged {
+			isLogged
+		}",
+	);
+
+	queries.insert(
 		"public_record_paginated",
 		"query public_record_paginated($page: Int) {
 			publicRecord(page: $page) {

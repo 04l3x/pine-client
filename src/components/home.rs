@@ -7,11 +7,10 @@ use crate::utils::log;
 use material_yew::drawer::*;
 use yew::prelude::*;
 use yew_router::prelude::*;
-
 use yew_router::service::RouteService;
 
 pub struct Home {
-	pub drawer_opened: bool,
+	drawer_opened: bool,
 	link: ComponentLink<Self>,
 }
 
@@ -74,9 +73,10 @@ impl Home {
 		}
 	}
 
-	fn current_route() {
+	fn current_route() -> Route {
 		let route_service: RouteService<()> = RouteService::new();
 		let route = route_service.get_route();
 		log(&format!("{:?}", route));
+		route
 	}
 }

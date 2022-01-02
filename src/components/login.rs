@@ -1,4 +1,4 @@
-use crate::app::AppRoute;
+//use crate::app::AppRoute;
 use crate::auth::Credentials;
 use crate::utils::{log, new_style, parser};
 use material_yew::{
@@ -10,15 +10,15 @@ use yewtil::future::LinkFuture;
 
 pub struct Login {
 	link: ComponentLink<Self>,
-	username: String,
-	password: String,
+	username: Option<String>,
+	password: Option<String>,
 }
 
 pub enum Msg {
 	Clean,
 	Login,
-	SetUsername(String),
-	SetPassword(String),
+	SetUsername(Option<String>),
+	SetPassword(Option<String>),
 }
 
 impl Component for Login {
@@ -28,16 +28,16 @@ impl Component for Login {
 	fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
 		Self {
 			link,
-			username: String::from(""),
-			password: String::from(""),
+			username: None,
+			password: None,
 		}
 	}
 
 	fn update(&mut self, msg: Self::Message) -> ShouldRender {
 		match msg {
 			Msg::Clean => {
-				self.username = String::from("");
-				self.password = String::from("");
+				self.username = None;
+				self.password = None;
 				true
 			}
 			Msg::SetUsername(username) => {
@@ -49,21 +49,31 @@ impl Component for Login {
 				false
 			}
 			Msg::Login => {
-				let credentials = Credentials::new(self.username.clone(), self.password.clone());
+				match &self.username {
+					Some(username) => match &self.password {
+						Some(password) => {
+							let credentials = Credentials::new(username.clone(), password.clone());
 
-				self.link.send_future(async {
-					match credentials.login().await {
-						Ok(_) => {
-							log(&format!("ok"));
-							Msg::Clean
+							self.link.send_future(async {
+								match credentials.login().await {
+									Ok(_) => {
+										log(&format!("ok"));
+										Msg::Clean
+									}
+									Err(e) => {
+										log(&format!("err: {:?}", e));
+										Msg::Clean
+									}
+								}
+							});
 						}
-						Err(e) => {
-							log(&format!("err: {:?}", e));
-							Msg::Clean
-						}
-					}
-				});
+						None => (),
+					},
+					None => (),
+				}
 
+				//are you here? really?
+				drop(self);
 				false
 			}
 		}
@@ -85,10 +95,15 @@ impl Component for Login {
 			"#,
 		));
 
-		let input_usrn = self.link.callback(|e: InputData| Msg::SetUsername(e.value));
-		let input_pwd = self.link.callback(|e: InputData| Msg::SetPassword(e.value));
+		let input_usrn = self
+			.link
+			.callback(|e: InputData| Msg::SetUsername(Some(e.value)));
+		let input_pwd = self
+			.link
+			.callback(|e: InputData| Msg::SetPassword(Some(e.value)));
 
 		let on_login = self.link.callback(|_| Msg::Login);
+		//let on_login = self.link.callback(|_| drop(input_pwd));
 
 		html! { <>
 			<div class={ctn_style} >
@@ -98,7 +113,10 @@ impl Component for Login {
 							label = {"username"}
 							field_type = {TextFieldType::Text}
 							oninput = { input_usrn }
-							value = { self.username.clone() }
+							//value = { match &self.username {
+							//	Some(username) => username.clone(),
+							//	None => String::from(""),
+							//} }
 						/>
 					</div>
 					<div>
@@ -106,7 +124,10 @@ impl Component for Login {
 							label = {"password"}
 							field_type = {TextFieldType::Password}
 							oninput = { input_pwd }
-							value = { self.password.clone() }
+							//value = { match &self.password {
+							//	Some(password) => password.clone(),
+							//	None => String::from(""),
+							//} }
 						/>
 					</div>
 					<span onclick = { on_login }>

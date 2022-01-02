@@ -1,13 +1,8 @@
 use crate::graphql::Executor;
+use crate::utils;
 use error::Result;
 use serde::{Deserialize, Serialize};
 use yew::format::Json;
-use yew::services::storage::{Area, StorageService};
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct Session {
-	pub token: String,
-}
 
 #[derive(Debug, Serialize)]
 pub struct Credentials {
@@ -74,16 +69,39 @@ impl User {
 	}
 }
 
-impl Session {
-	fn save(&self) {
-		StorageService::new(Area::Local)
-			.expect("not storage available")
-			.store("session", Json(self));
-	}
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Session {
+	pub token: String,
 }
 
-fn is_logged() -> bool {
-	false
+impl Session {
+	fn save(&self) {
+		utils::local_storage().store("session", Json(self));
+	}
+
+	fn clean() {
+		utils::local_storage().remove("session")
+	}
+
+	/*pub fn get_current() -> std::result::Result<Session, ()> {
+		match StorageService::new(Area::Local)
+			.expect("not storage availabe")
+			.restore("session")
+		{
+			Ok(token) => Ok(serde_json::from_str(&token).unwrap()),
+			Err(_) => Err(()),
+		}
+	}*/
+
+	pub async fn is_logged() -> bool {
+		match Executor::default_headers()
+			.execute::<Data>("is_logged")
+			.await
+		{
+			Ok(result) => result.is_logged.expect("no logged information"),
+			Err(_) => false,
+		}
+	}
 }
 
 #[derive(Debug, Serialize)]
@@ -97,4 +115,5 @@ struct Vars {
 struct Data {
 	sign_in: Option<Session>,
 	sign_up: Option<Session>,
+	is_logged: Option<bool>,
 }

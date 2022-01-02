@@ -1,5 +1,5 @@
 mod queries;
-use crate::utils::get_token;
+use crate::utils;
 use error::Result;
 use lightql::Client;
 use serde::{Deserialize, Serialize};
@@ -26,15 +26,18 @@ impl<'c> Default for Executor<'c> {
 /// Executor::default_headers()
 ///
 impl<'c> Executor<'c> {
-	fn _default_headers() -> Self {
+	pub fn default_headers() -> Self {
+		let token = Session::get_token();
+
 		let mut headers: HashMap<&str, &str> = HashMap::new();
-		headers.insert("token", get_token());
+		headers.insert("token", token.as_str());
+
 		Self {
 			client: Client::<'c>::new_with_headers(crate::endpoint(), headers),
 		}
 	}
 
-	pub async fn _execute<'q, T>(self, query_name: &'q str) -> Result<T>
+	pub async fn execute<'q, T>(self, query_name: &'q str) -> Result<T>
 	where
 		T: for<'de> Deserialize<'de>,
 	{
@@ -65,5 +68,22 @@ struct QueryLoader;
 impl QueryLoader {
 	fn load<'q>(query_name: &'q str) -> &'q str {
 		queries::load(query_name).expect("error loading query")
+	}
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct Session {
+	token: String,
+}
+
+impl Session {
+	fn get_token() -> String {
+		match utils::local_storage().restore("session") {
+			Ok(session) => match serde_json::from_str::<Session>(&session) {
+				Ok(s) => s.token,
+				Err(_) => String::from(""),
+			},
+			Err(_) => String::from(""),
+		}
 	}
 }

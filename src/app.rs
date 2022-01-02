@@ -1,10 +1,8 @@
-use yew::prelude::*;
-
 use crate::components;
-
+use yew::prelude::*;
 use yew_router::prelude::*;
 
-#[derive(Switch, Debug, Clone)]
+#[derive(Clone, Debug, Switch)]
 pub enum AppRoute {
 	#[to = "/login"]
 	Login,
@@ -14,7 +12,7 @@ pub enum AppRoute {
 	Home,
 }
 
-pub struct App {}
+pub struct App;
 
 pub enum Msg {}
 
@@ -26,7 +24,7 @@ impl Component for App {
 		App {}
 	}
 
-	fn update(&mut self, _msg: Self::Message) -> ShouldRender {
+	fn update(&mut self, _: Self::Message) -> ShouldRender {
 		false
 	}
 

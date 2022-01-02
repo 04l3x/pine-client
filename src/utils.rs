@@ -1,9 +1,10 @@
 use css_in_rust::Style;
 use yew::html::Classes;
 use yew::services::console::ConsoleService;
+use yew::services::storage::{Area, StorageService};
 
-pub fn get_token<'t>() -> &'t str {
-	"token"
+pub fn local_storage() -> StorageService {
+	StorageService::new(Area::Local).expect("not storage available")
 }
 
 enum Env {

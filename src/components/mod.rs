@@ -1,4 +1,5 @@
 pub mod create_repo;
+pub mod dashboard;
 pub mod home;
 pub mod login;
 pub mod login_button;
