@@ -1,9 +1,9 @@
 mod queries;
-use crate::utils;
+//use crate::utils;
 use error::Result;
 use lightql::Client;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+//use std::collections::HashMap;
 
 pub struct Executor<'c> {
 	client: Client<'c>,
@@ -26,7 +26,7 @@ impl<'c> Default for Executor<'c> {
 /// Executor::default_headers()
 ///
 impl<'c> Executor<'c> {
-	pub fn default_headers() -> Self {
+	/*pub fn default_headers() -> Self {
 		let token = Session::get_token();
 
 		let mut headers: HashMap<&str, &str> = HashMap::new();
@@ -35,9 +35,9 @@ impl<'c> Executor<'c> {
 		Self {
 			client: Client::<'c>::new_with_headers(crate::endpoint(), headers),
 		}
-	}
+	}*/
 
-	pub async fn execute<'q, T>(self, query_name: &'q str) -> Result<T>
+	/*pub async fn execute<'q, T>(self, query_name: &'q str) -> Result<T>
 	where
 		T: for<'de> Deserialize<'de>,
 	{
@@ -45,7 +45,7 @@ impl<'c> Executor<'c> {
 			Ok(result) => Ok(result),
 			Err(e) => Err(Box::new(e)),
 		}
-	}
+	}*/
 
 	pub async fn execute_with_vars<'q, T, V>(self, query_name: &'q str, vars: V) -> Result<T>
 	where
@@ -71,12 +71,13 @@ impl QueryLoader {
 	}
 }
 
+//#[allow(dead_code)]
 #[derive(Debug, Deserialize, Serialize)]
 struct Session {
 	token: String,
 }
 
-impl Session {
+/*impl Session {
 	fn get_token() -> String {
 		match utils::local_storage().restore("session") {
 			Ok(session) => match serde_json::from_str::<Session>(&session) {
@@ -86,4 +87,4 @@ impl Session {
 			Err(_) => String::from(""),
 		}
 	}
-}
+}*/

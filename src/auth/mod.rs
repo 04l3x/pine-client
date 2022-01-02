@@ -79,7 +79,7 @@ impl Session {
 		utils::local_storage().store("session", Json(self));
 	}
 
-	fn clean() {
+	fn _clean() {
 		utils::local_storage().remove("session")
 	}
 
@@ -93,7 +93,7 @@ impl Session {
 		}
 	}*/
 
-	pub async fn is_logged() -> bool {
+	/*pub async fn is_logged() -> bool {
 		match Executor::default_headers()
 			.execute::<Data>("is_logged")
 			.await
@@ -101,7 +101,7 @@ impl Session {
 			Ok(result) => result.is_logged.expect("no logged information"),
 			Err(_) => false,
 		}
-	}
+	}*/
 }
 
 #[derive(Debug, Serialize)]
@@ -115,5 +115,5 @@ struct Vars {
 struct Data {
 	sign_in: Option<Session>,
 	sign_up: Option<Session>,
-	is_logged: Option<bool>,
+	//is_logged: Option<bool>,
 }

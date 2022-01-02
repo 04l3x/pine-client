@@ -62,16 +62,16 @@ impl Data {
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct Info {
-	count: i32,
-	pages: i32,
-	prev: Option<i32>,
-	next: Option<i32>,
+	_count: i32,
+	_pages: i32,
+	_prev: Option<i32>,
+	_next: Option<i32>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Records {
-	info: Info,
+	_info: Info,
 	results: Vec<Record>,
 }
 
