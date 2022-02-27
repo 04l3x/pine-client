@@ -1,9 +1,11 @@
-//text_inputs::{MatTextField, TextFieldType},
 use super::record_view::RecordView;
 use crate::models::record::Record;
 use crate::utils::{log, new_style, parser};
-use material_yew::icon_button::MatIconButton;
-use web_sys::{InputEvent, MouseEvent};
+use material_yew::{
+    icon_button::MatIconButton,
+    text_inputs::{MatTextField, TextFieldType},
+};
+use web_sys::MouseEvent;
 use yew::{html, Callback, Component, Context, Html, Properties};
 
 pub struct SearchTool {
@@ -106,19 +108,17 @@ impl Component for SearchTool {
 			"#,
         ));
 
-        let on_input = ctx
-            .link()
-            .callback(|e: InputEvent| Msg::Search(e.data().expect("")));
+        let on_input = ctx.link().callback(|e: String| Msg::Search(e));
 
         let toggle = ctx.link().callback(|e| Msg::Toggle(e));
 
         html! { <>
             <div class={container}>
                 <div class={text_field}>
-                    <input
+                    <MatTextField
                         label="search"
-                        //field_type={TextFieldType::Search}
-                        //icon_trailing="search"
+                        field_type={TextFieldType::Search}
+                        icon_trailing="search"
                         oninput={on_input}
                         value={self.query.clone()}
                     />
