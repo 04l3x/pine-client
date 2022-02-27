@@ -1,11 +1,6 @@
 use css_in_rust::Style;
+use gloo_console;
 use yew::html::Classes;
-use yew::services::console::ConsoleService;
-use yew::services::storage::{Area, StorageService};
-
-pub fn local_storage() -> StorageService {
-	StorageService::new(Area::Local).expect("not storage available")
-}
 
 enum Env {
 	Dev,
@@ -15,7 +10,7 @@ enum Env {
 
 pub fn log(s: &str) {
 	match check_env() {
-		Env::Dev => ConsoleService::log(s),
+		Env::Dev => gloo_console::log!(s),
 		_ => (),
 	}
 }
@@ -30,10 +25,4 @@ pub fn parser(style: Style) -> Classes {
 
 pub fn new_style(class_name: &'static str, css: &'static str) -> Style {
 	Style::create(class_name, css).expect("no created css")
-	/*{
-		Ok(style) => style,
-		/*Err(e) => {
-			panic!("css error: {}", e);
-		}*/
-	}*/
 }

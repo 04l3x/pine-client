@@ -1,9 +1,7 @@
 use crate::models::record::Record;
-use yew::prelude::*;
+use yew::{html, Component, Context, Html, Properties};
 
-pub struct RecordView {
-	props: Props,
-}
+pub struct RecordView;
 
 #[derive(Properties, Clone, PartialEq)]
 pub struct Props {
@@ -14,27 +12,23 @@ impl Component for RecordView {
 	type Message = ();
 	type Properties = Props;
 
-	fn create(props: Self::Properties, _: ComponentLink<Self>) -> Self {
-		Self { props }
+	fn create(_: &Context<Self>) -> Self {
+		Self
 	}
 
-	fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-		false
-	}
-
-	fn change(&mut self, props: Self::Properties) -> ShouldRender {
-		if self.props != props {
-			self.props = props;
+	/*fn changed(&mut self, ctx: &Context<Self>) -> bool {
+		if ctx.props != props {
+			ctx.props = props;
 			true
 		} else {
 			false
 		}
-	}
+	}*/
 
-	fn view(&self) -> Html {
+	fn view(&self, ctx: &Context<Self>) -> Html {
 		html! { <>
 			<div>
-				{self.props.record.name.clone()}
+				{ctx.props().record.name.clone()}
 			</div>
 		</> }
 	}

@@ -1,7 +1,8 @@
 use crate::graphql::Executor;
-use error::Result;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
+
+type Result<T> = std::result::Result<T, lightql::GraphQLError>;
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "UPPERCASE")]

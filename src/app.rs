@@ -1,50 +1,43 @@
 use crate::components;
-use yew::prelude::*;
+use yew::{html, Component, Context, Html};
 use yew_router::prelude::*;
 
-#[derive(Clone, Debug, Switch)]
+#[derive(Clone, PartialEq, Routable)]
 pub enum AppRoute {
-	#[to = "/login"]
-	Login,
-	#[to = "/register"]
-	Register,
-	#[to = "/"]
-	Home,
+    #[at("/")]
+    Home,
+    #[at("/login")]
+    Login,
+    #[at("/register")]
+    Register,
+    #[not_found]
+    #[at("/404")]
+    NotFound,
 }
 
 pub struct App;
 
-pub enum Msg {}
-
 impl Component for App {
-	type Message = Msg;
-	type Properties = ();
+    type Message = ();
+    type Properties = ();
 
-	fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-		App {}
-	}
+    fn create(_: &Context<Self>) -> Self {
+        Self
+    }
 
-	fn update(&mut self, _: Self::Message) -> ShouldRender {
-		false
-	}
-
-	fn change(&mut self, _: Self::Properties) -> ShouldRender {
-		false
-	}
-
-	fn view(&self) -> Html {
-		html! { <>
-			<components::home::Home />
-		</> }
-	}
+    fn view(&self, _: &Context<Self>) -> Html {
+        html! { <>
+            <components::home::Home />
+        </> }
+    }
 }
 
 #[cfg(test)]
 mod tests {
-	use wasm_bindgen_test::wasm_bindgen_test;
+    use wasm_bindgen_test::wasm_bindgen_test;
 
-	#[wasm_bindgen_test]
-	fn test() {
-		assert!(true);
-	}
+    #[wasm_bindgen_test]
+    fn test() {
+        assert!(true);
+    }
 }

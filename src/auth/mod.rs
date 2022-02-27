@@ -1,119 +1,116 @@
 use crate::graphql::Executor;
-use crate::utils;
-use error::Result;
+use gloo_storage::{LocalStorage, Storage};
 use serde::{Deserialize, Serialize};
-use yew::format::Json;
+
+type Result<T> = std::result::Result<T, lightql::GraphQLError>;
 
 #[derive(Debug, Serialize)]
 pub struct Credentials {
-	username: String,
-	password: String,
+    username: String,
+    password: String,
 }
 
 impl Credentials {
-	pub fn new(username: String, password: String) -> Self {
-		Credentials { username, password }
-	}
+    pub fn new(username: String, password: String) -> Self {
+        Credentials { username, password }
+    }
 
-	pub async fn login(self) -> Result<()> {
-		let vars = Vars {
-			creds: Some(self),
-			form: None,
-		};
+    pub async fn login(self) -> Result<()> {
+        let vars = Vars {
+            creds: Some(self),
+            form: None,
+        };
 
-		match Executor::default()
-			.execute_with_vars::<Data, Vars>("login", vars)
-			.await
-		{
-			Ok(data) => {
-				data.sign_in.expect("").save();
-				Ok(())
-			}
-			Err(e) => Err(e),
-		}
-	}
+        match Executor::default()
+            .execute_with_vars::<Data, Vars>("login", vars)
+            .await
+        {
+            Ok(data) => {
+                data.sign_in.expect("").save();
+                Ok(())
+            }
+            Err(e) => Err(e),
+        }
+    }
 }
 
 #[derive(Debug, Serialize)]
 pub struct User {
-	email: String,
-	username: String,
-	password: String,
+    email: String,
+    username: String,
+    password: String,
 }
 
 impl User {
-	pub fn new(email: String, username: String, password: String) -> Self {
-		User {
-			email,
-			username,
-			password,
-		}
-	}
+    pub fn new(email: String, username: String, password: String) -> Self {
+        User {
+            email,
+            username,
+            password,
+        }
+    }
 
-	pub async fn register(self) -> Result<()> {
-		let vars = Vars {
-			creds: None,
-			form: Some(self),
-		};
+    pub async fn register(self) -> Result<()> {
+        let vars = Vars {
+            creds: None,
+            form: Some(self),
+        };
 
-		match Executor::default()
-			.execute_with_vars::<Data, Vars>("register", vars)
-			.await
-		{
-			Ok(data) => {
-				data.sign_up.expect("").save();
-				Ok(())
-			}
-			Err(e) => Err(e),
-		}
-	}
+        match Executor::default()
+            .execute_with_vars::<Data, Vars>("register", vars)
+            .await
+        {
+            Ok(data) => {
+                data.sign_up.expect("").save();
+                Ok(())
+            }
+            Err(e) => Err(e),
+        }
+    }
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Session {
-	pub token: String,
+    pub token: String,
 }
 
 impl Session {
-	fn save(&self) {
-		utils::local_storage().store("session", Json(self));
-	}
+    fn save(&self) {
+        LocalStorage::set("session", self).unwrap();
+    }
 
-	fn _clean() {
-		utils::local_storage().remove("session")
-	}
+    fn _clean() {
+        LocalStorage::delete("session")
+    }
 
-	/*pub fn get_current() -> std::result::Result<Session, ()> {
-		match StorageService::new(Area::Local)
-			.expect("not storage availabe")
-			.restore("session")
-		{
-			Ok(token) => Ok(serde_json::from_str(&token).unwrap()),
-			Err(_) => Err(()),
-		}
-	}*/
+    pub fn _get_current() -> std::result::Result<Session, ()> {
+        match LocalStorage::get("session") {
+            Ok(token) => Ok(token),
+            Err(_) => Err(()),
+        }
+    }
 
-	/*pub async fn is_logged() -> bool {
-		match Executor::default_headers()
-			.execute::<Data>("is_logged")
-			.await
-		{
-			Ok(result) => result.is_logged.expect("no logged information"),
-			Err(_) => false,
-		}
-	}*/
+    /*pub async fn is_logged() -> bool {
+        match Executor::default_headers()
+            .execute::<Data>("is_logged")
+            .await
+        {
+            Ok(result) => result.is_logged.expect("no logged information"),
+            Err(_) => false,
+        }
+    }*/
 }
 
 #[derive(Debug, Serialize)]
 struct Vars {
-	creds: Option<Credentials>,
-	form: Option<User>,
+    creds: Option<Credentials>,
+    form: Option<User>,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct Data {
-	sign_in: Option<Session>,
-	sign_up: Option<Session>,
-	//is_logged: Option<bool>,
+    sign_in: Option<Session>,
+    sign_up: Option<Session>,
+    //is_logged: Option<bool>,
 }

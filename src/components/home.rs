@@ -1,82 +1,67 @@
 use crate::app::AppRoute;
 use crate::components::{
-	dashboard::Dashboard, login::Login, register::Register, search_tool::search_tool::SearchTool,
-	topbar::TopBar,
+    dashboard::Dashboard, login::Login, register::Register, search_tool::search_tool::SearchTool,
+    topbar::TopBar,
 };
-use crate::utils::log;
 use material_yew::drawer::*;
 use yew::prelude::*;
 use yew_router::prelude::*;
-use yew_router::service::RouteService;
 
 pub struct Home {
-	drawer_opened: bool,
-	link: ComponentLink<Self>,
+    drawer_opened: bool,
 }
 
 pub enum Msg {
-	Toggle,
+    Toggle,
 }
 
 impl Component for Home {
-	type Message = Msg;
-	type Properties = ();
+    type Message = Msg;
+    type Properties = ();
 
-	fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
-		Self {
-			drawer_opened: false,
-			link,
-		}
-	}
+    fn create(_ctx: &Context<Self>) -> Self {
+        Self {
+            drawer_opened: false,
+        }
+    }
 
-	fn update(&mut self, msg: Self::Message) -> ShouldRender {
-		Self::current_route();
-		match msg {
-			Msg::Toggle => {
-				self.drawer_opened = !self.drawer_opened;
-				true
-			}
-		}
-	}
+    fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
+        match msg {
+            Msg::Toggle => {
+                self.drawer_opened = !self.drawer_opened;
+                true
+            }
+        }
+    }
 
-	fn change(&mut self, _: Self::Properties) -> ShouldRender {
-		false
-	}
+    fn view(&self, ctx: &Context<Self>) -> Html {
+        let toggle = ctx.link().callback(|_| Msg::Toggle);
 
-	fn view(&self) -> Html {
-		let toggle = self.link.callback(|_| Msg::Toggle);
+        let opened = self.drawer_opened;
 
-		let opened = self.drawer_opened;
+        html! { <>
+            <MatDrawer open={opened} drawer_type={"dismissible"}>
 
-		html! { <>
-			<MatDrawer open={opened} drawer_type={"dismissible"}>
+                <SearchTool toggle={toggle.clone()} />
 
-				<SearchTool toggle={toggle.clone()} />
-
-				<MatDrawerAppContent>
-					<TopBar toggle={toggle} drawer_opened={opened} />
-					<Router<AppRoute, ()>
-						render = Router::render(Self::switch)
-					/>
-				</MatDrawerAppContent>
-			</MatDrawer>
-		</> }
-	}
+                <MatDrawerAppContent>
+                    <BrowserRouter>
+                        <TopBar toggle={toggle} drawer_opened={opened} />
+                        <Switch<AppRoute> render={Switch::render(Self::switch)} />
+                    </BrowserRouter>
+                </MatDrawerAppContent>
+            </MatDrawer>
+        </> }
+    }
 }
 
 impl Home {
-	fn switch(switch: AppRoute) -> Html {
-		match switch {
-			AppRoute::Login => html! { <Login/> },
-			AppRoute::Register => html! { <Register/> },
-			AppRoute::Home => html! { <Dashboard/> },
-		}
-	}
-
-	fn current_route() -> Route {
-		let route_service: RouteService<()> = RouteService::new();
-		let route = route_service.get_route();
-		log(&format!("{:?}", route));
-		route
-	}
+    fn switch(switch: &AppRoute) -> Html {
+        match switch {
+            AppRoute::Login => html! { <Login/> },
+            AppRoute::Register => html! { <Register/> },
+            AppRoute::Home => html! { <Dashboard/> },
+            AppRoute::NotFound => html! { <span>{"not found"}</span> },
+        }
+    }
 }
