@@ -1,8 +1,8 @@
 [package]
 name = "pine-client"
 version = "0.1.0"
-authors = ["al3x al3x@al3x.io"]
-edition = "2018"
+authors = ["0al3x alex.vacan.bala@gmail.com"]
+edition = "2021"
 
 [lib]
 crate-type = ["rlib", "cdylib"]
