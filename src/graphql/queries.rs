@@ -12,6 +12,19 @@ fn queries<'q>() -> HashMap<&'q str, &'q str> {
 	let mut queries: HashMap<&str, &str> = HashMap::new();
 
 	queries.insert(
+		"repo_tree",
+		"query repo_tree($id: UUID) {
+			repoTree(id: $id) {
+				objects{
+					path,
+					kind,
+					name,
+				}
+			}
+		}",
+	);
+
+	queries.insert(
 		"login",
 		"mutation login($creds: Credentials) {
 			signIn(credentials: $creds){

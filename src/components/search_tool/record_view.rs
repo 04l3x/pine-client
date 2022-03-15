@@ -16,19 +16,10 @@ impl Component for RecordView {
 		Self
 	}
 
-	/*fn changed(&mut self, ctx: &Context<Self>) -> bool {
-		if ctx.props != props {
-			ctx.props = props;
-			true
-		} else {
-			false
-		}
-	}*/
-
 	fn view(&self, ctx: &Context<Self>) -> Html {
 		html! { <>
 			<div>
-				{ctx.props().record.name.clone()}
+				{&ctx.props().record.name}
 			</div>
 		</> }
 	}
